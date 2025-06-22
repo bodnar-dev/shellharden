@@ -325,7 +325,7 @@ pub fn find_lvalue(horizon: &[u8]) -> (Tri, usize) {
 		// Recursion: There is now an expression_tracker() if needed.
 		match (state, byte) {
 			(Lex::Ident, b'=') => return (Tri::Yes, ate),
-			(Lex::Pluss, b'=') => return (Tri::Yes, ate),
+			(Lex::Pluss, b'=') => return (Tri::Yes, ate - 1),
 			(Lex::Ident, b'[') => state = Lex::Brack,
 			(Lex::Brack, b']') => state = Lex::Ident,
 			(Lex::Ident, b'+') => state = Lex::Pluss,
@@ -409,7 +409,7 @@ fn test_find_lvalue() {
 	assert!(find_lvalue(b"esa ") == (Tri::No, 3));
 	assert!(find_lvalue(b"esa]") == (Tri::No, 3));
 	assert!(find_lvalue(b"esa=") == (Tri::Yes, 3));
-	assert!(find_lvalue(b"esa+=") == (Tri::Yes, 4));
+	assert!(find_lvalue(b"esa+=") == (Tri::Yes, 3));
 	assert!(find_lvalue(b"esa[]=") == (Tri::Yes, 5));
-	assert!(find_lvalue(b"esa[]+=") == (Tri::Yes, 6));
+	assert!(find_lvalue(b"esa[]+=") == (Tri::Yes, 5));
 }
